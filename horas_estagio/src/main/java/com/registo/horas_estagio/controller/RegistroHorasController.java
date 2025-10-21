@@ -39,6 +39,7 @@ public class RegistroHorasController {
             @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso"),
             @ApiResponse(responseCode = "403", description = "Acesso negado - apenas ADMIN")
     })
+    @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<RegisterResponse>> getAllRegisterHoras() {
         return ResponseEntity.ok(registerHorasService.findAllRegisteredHours());
@@ -133,7 +134,7 @@ public class RegistroHorasController {
             @ApiResponse(responseCode = "400", description = "Dados inválidos"),
             @ApiResponse(responseCode = "403", description = "Acesso negado")
     })
-    @PostMapping("/")
+    @PostMapping()
     @PreAuthorize("hasRole('ADMIN') or (hasRole('ESTAGIARIO') and #registerRequest.estagiario() == authentication.name)")
     public ResponseEntity<RegisterResponse> addRegisterHoras(@RequestBody @Valid RegisterRequest registerRequest) {
        RegisterResponse registerResponse= registerHorasService.submitHours(registerRequest);
