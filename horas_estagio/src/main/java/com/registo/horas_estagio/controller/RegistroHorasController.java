@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/registos")
+@RequestMapping("/api/registros")
 @RequiredArgsConstructor
 public class RegistroHorasController {
 
@@ -39,13 +39,12 @@ public class RegistroHorasController {
             @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso"),
             @ApiResponse(responseCode = "403", description = "Acesso negado - apenas ADMIN")
     })
-    @GetMapping("/list")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<RegisterResponse>> getAllRegisterHoras() {
         return ResponseEntity.ok(registerHorasService.findAllRegisteredHours());
     }
 
-    @GetMapping("/list/paginated")
+    @GetMapping("/paginated")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PageResponse<RegisterResponse>> getAllRegisterHorasPaginated(
             @Parameter(description = "Número da página (0-based)", example = "0")
@@ -79,7 +78,7 @@ public class RegistroHorasController {
             @ApiResponse(responseCode = "403", description = "Acesso negado"),
             @ApiResponse(responseCode = "404", description = "Nenhum registro encontrado")
     })
-    @GetMapping("/list/{name}")
+    @GetMapping("/{name}")
     @PreAuthorize("hasRole('ADMIN') or (hasRole('ESTAGIARIO') and #name == authentication.name)")
     public ResponseEntity<List<RegisterResponse>> getAllRegisterHorasUser(@PathVariable String name) {
         return ResponseEntity.ok(registerHorasService.findAllRegisteredHoursUser(name));
@@ -94,7 +93,7 @@ public class RegistroHorasController {
             @ApiResponse(responseCode = "403", description = "Acesso negado"),
             @ApiResponse(responseCode = "404", description = "Nenhum registro encontrado")
     })
-    @GetMapping("/list/{name}/paginated")
+    @GetMapping("/{name}/paginated")
     @PreAuthorize("hasRole('ADMIN') or (hasRole('ESTAGIARIO') and #name == authentication.name)")
     public ResponseEntity<PageResponse<RegisterResponse>> getAllRegisterHorasUserPaginated(
             @PathVariable String name,
@@ -134,7 +133,7 @@ public class RegistroHorasController {
             @ApiResponse(responseCode = "400", description = "Dados inválidos"),
             @ApiResponse(responseCode = "403", description = "Acesso negado")
     })
-    @PostMapping("/add")
+    @PostMapping("/")
     @PreAuthorize("hasRole('ADMIN') or (hasRole('ESTAGIARIO') and #registerRequest.estagiario() == authentication.name)")
     public ResponseEntity<RegisterResponse> addRegisterHoras(@RequestBody @Valid RegisterRequest registerRequest) {
        RegisterResponse registerResponse= registerHorasService.submitHours(registerRequest);
@@ -149,7 +148,7 @@ public class RegistroHorasController {
             @ApiResponse(responseCode = "404", description = "Registro não encontrado"),
             @ApiResponse(responseCode = "403", description = "Acesso negado")
     })
-    @PutMapping("update/{uuid}")
+    @PutMapping("/{uuid}")
     @PreAuthorize("hasRole('ADMIN') or (hasRole('ESTAGIARIO') and #registerRequest.estagiario() == authentication.name)")
     public ResponseEntity<RegisterResponse> updateRegister(
             @PathVariable UUID uuid,
@@ -160,7 +159,7 @@ public class RegistroHorasController {
         return ResponseEntity.ok(response);
     }
     @Operation(
-            summary = "Apgagar registro",
+            summary = "Apagar registro",
             description = "Remove um registro de horas (apenas ADMIN)"
     )
     @ApiResponses(value = {
@@ -168,7 +167,7 @@ public class RegistroHorasController {
             @ApiResponse(responseCode = "404", description = "Registro não encontrado"),
             @ApiResponse(responseCode = "403", description = "Acesso negado - apenas ADMIN")
     })
-    @DeleteMapping("delete/{publicId}")
+    @DeleteMapping("/{publicId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteRegister(@PathVariable UUID publicId) {
         registerHorasService.DeleteRegisteredHoursUser(publicId);
